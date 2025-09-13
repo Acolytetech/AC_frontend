@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import API from "@/lib/api"; // your axios instance
 import PropertyGrid from "@/components/home/PropertyGrid";
+import {motion} from "framer-motion"
 
 // Property type
 export interface Property {
@@ -90,13 +91,23 @@ const handleSearch = async () => {
         />
 
         {/* Overlay */}
-        <div className="absolute px-20 inset-0 bg-black/50 flex flex-col justify-center items-center text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+        <motion.div 
+        
+        className="absolute  inset-0 bg-black/50 flex flex-col justify-center items-center text-center px-10">
+          <motion.h1    initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }} className="text-4xl md:text-6xl font-bold text-white mb-6">
             Find Your Dream Home in Jaipur
-          </h1>
+          </motion.h1>
 
           {/* Search Bar Wrapper */}
-          <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg flex flex-col md:flex-row gap-3 w-full ">
+          <motion.div
+
+          
+             initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+          className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg flex flex-col md:flex-row gap-3 w-full ">
             <input
               type="text"
               placeholder="Location"
@@ -139,8 +150,8 @@ const handleSearch = async () => {
             >
               Search
             </button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       <section className=" max-w-7xl mx-auto  relative z-10 " id="searchingproperty">
