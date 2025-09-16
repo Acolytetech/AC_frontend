@@ -17,8 +17,8 @@ export default function LoginPage() {
       setAuthToken(res.data.token);
       alert("Login successful!");
       router.push("/");
-    } catch (err: any) {
-      alert(err.response?.data?.message || "Login failed");
+    } catch (err) {
+      alert(err || "Login failed");
     }
   };
 

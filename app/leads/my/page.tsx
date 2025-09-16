@@ -23,7 +23,7 @@ export default function MyLeads() {
       try {
         const res = await API.get<Lead[]>("/leads/my");
         setLeads(res.data);
-      } catch (err: any) {
+      } catch (err) {
         console.error(err);
       }
     };

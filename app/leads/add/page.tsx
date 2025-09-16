@@ -26,8 +26,8 @@ export default function SubmitLead() {
       await API.post("/leads", form);
       alert("Lead submitted successfully!");
       setForm({ propertyId: "", name: "", email: "", phone: "" }); // Reset form
-    } catch (err: any) {
-      alert(err.response?.data?.message || "Error submitting lead");
+    } catch (err) {
+      alert(err|| "Error submitting lead");
     }
   };
 
