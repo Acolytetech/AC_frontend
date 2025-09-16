@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import API from "@/lib/api";
-import PropertyCard from "@/components/PropertyCard";
+import PropertyCard from "@/components/home/PropertyCard";
 
 export default function SearchPage() {
   const [query, setQuery] = useState({ location: "", type: "rent", bhk: "", minPrice: "", maxPrice: "" });
@@ -31,7 +31,7 @@ export default function SearchPage() {
       <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2 mb-4">Search</button>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {results.map(prop => <PropertyCard key={prop._id} property={prop} />)}
+        {results.map(prop => <PropertyCard key={prop} property={prop} />)}
       </div>
     </div>
   );
