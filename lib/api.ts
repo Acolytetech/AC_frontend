@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  // baseURL: "http://localhost:5000/api",
+  baseURL: "https://ac-backendnew.onrender.com/api",
+
 });
 
 export const setAuthToken = (token?: string) => {
