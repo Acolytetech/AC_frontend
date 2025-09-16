@@ -25,7 +25,7 @@ export default function AdminProperties() {
       try {
         const res = await API.get<Property[]>("/properties");
         setProperties(res.data);
-      } catch (err: any) {
+      } catch (err) {
         console.error(err);
       }
     };
@@ -43,8 +43,8 @@ export default function AdminProperties() {
       setProperties((prev) =>
         prev.map((prop) => (prop._id === id ? { ...prop, status } : prop))
       );
-    } catch (err: any) {
-      alert(err.response?.data?.message || "Error updating property");
+    } catch (err) {
+      alert(err || "Error updating property");
     }
   };
 
