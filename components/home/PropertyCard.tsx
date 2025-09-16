@@ -1,9 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { Property } from "@/components/home/Hero"; // 👈 import type
+import { Property } from "@/components/home/Hero";
+import { useRouter } from "next/navigation"; // ✅ useRouter hook
 
 export default function PropertyCard({ property }: { property: Property }) {
+  const router = useRouter(); // ✅ initialize router
+
   return (
     <div className="relative border rounded shadow hover:shadow-lg transition overflow-hidden">
       <Image
@@ -19,7 +22,10 @@ export default function PropertyCard({ property }: { property: Property }) {
         <p>BHK: {property.bhk}</p>
         <p>Price: ₹{property.price}</p>
         <p>Type: {property.type}</p>
-        <button className="absolute bottom-1 right-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-103">
+        <button
+          onClick={() => router.push(`/properties/${property.id}`)} // ✅ use router.push
+          className="absolute bottom-1 right-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-103"
+        >
           View Property
         </button>
       </div>
