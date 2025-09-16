@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
+import { Menu, X } from "lucide-react";
 
 interface TokenPayload {
   role: string;
@@ -14,6 +15,7 @@ interface TokenPayload {
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -38,36 +40,105 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-black text-white p-4 flex justify-between items-center">
-      <Link href="/">
-        <h1 className="text-xl font-bold text-white-500 capitalize">Jaipur Accommodation</h1>
-      </Link>
-      <div className="flex gap-4">
-        <Link href="/">Home</Link>
-        <Link href="/properties">Properties</Link>
-           <Link href="/about">About</Link>
-        <Link href="/contact_us">Contact US</Link>
-        {isLoggedIn && role === "partner" && (
-          <Link href="/add-property" className="bg-green-500 px-3 py-1 rounded">
-            Add Property
-          </Link>
-        )}
-        
-      </div>
-        <div className="flex gap-4 font-medium">
-       
-      <button className="bg-blue-500 px-3 py-1 rounded">Partners with us</button>
-      <button className="bg-blue-500 px-3 py-1 rounded"> Booking</button>
-        {isLoggedIn ? (
-          <button onClick={handleLogout} className="bg-red-500 px-3 py-1 rounded">
-            Logout
+    <nav className="bg-black text-white p-4">
+      <div className="flex justify-between items-center">
+        {/* Logo */}
+        <Link href="/">
+          <h1 className="text-xl font-bold capitalize">
+            Jaipur Accommodation
+          </h1>
+        </Link>
+
+        {/* Desktop Menu */}
+        <div className="hidden md:flex gap-6 items-center">
+          <Link href="/">Home</Link>
+          <Link href="/properties">Properties</Link>
+          <Link href="/about">About</Link>
+          <Link href="/contact_us">Contact Us</Link>
+          {isLoggedIn && role === "partner" && (
+            <Link
+              href="/add-property"
+              className="bg-green-500 px-3 py-1 rounded"
+            >
+              Add Property
+            </Link>
+          )}
+          <button className="bg-blue-500 px-3 py-1 rounded">
+            Partners with us
           </button>
-        ) : (
-          <Link href="/login" className="bg-blue-500 px-3 py-1 rounded">
-            Login
-          </Link>
-        )}
+          <button className="bg-blue-500 px-3 py-1 rounded">Booking</button>
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 px-3 py-1 rounded"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link href="/login" className="bg-blue-500 px-3 py-1 rounded">
+              Login
+            </Link>
+          )}
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden"
+          onClick={() => setMenuOpen((prev) => !prev)}
+        >
+          {menuOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {menuOpen && (
+        <div className="flex flex-col gap-4 mt-4 md:hidden">
+          <Link href="/" onClick={() => setMenuOpen(false)}>
+            Home
+          </Link>
+          <Link href="/properties" onClick={() => setMenuOpen(false)}>
+            Properties
+          </Link>
+          <Link href="/about" onClick={() => setMenuOpen(false)}>
+            About
+          </Link>
+          <Link href="/contact_us" onClick={() => setMenuOpen(false)}>
+            Contact Us
+          </Link>
+          {isLoggedIn && role === "partner" && (
+            <Link
+              href="/add-property"
+              className="bg-green-500 px-3 py-1 rounded"
+              onClick={() => setMenuOpen(false)}
+            >
+              Add Property
+            </Link>
+          )}
+          <button className="bg-blue-500 px-3 py-1 rounded">
+            Partners with us
+          </button>
+          <button className="bg-blue-500 px-3 py-1 rounded">Booking</button>
+          {isLoggedIn ? (
+            <button
+              onClick={() => {
+                handleLogout();
+                setMenuOpen(false);
+              }}
+              className="bg-red-500 px-3 py-1 rounded"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="bg-blue-500 px-3 py-1 rounded"
+              onClick={() => setMenuOpen(false)}
+            >
+              Login
+            </Link>
+          )}
+        </div>
+      )}
     </nav>
   );
 }

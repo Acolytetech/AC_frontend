@@ -18,7 +18,7 @@ export default function HowItWorks() {
       button: "Start Searching",
       icon: <FaSearch className="text-2xl text-white" />,
       time: "2-5 minutes",
-      color: "from-blue-500 to-blue-600",
+      color: "from-blue-500 to-emerald-500",
     },
     {
       id: 2,
@@ -34,7 +34,7 @@ export default function HowItWorks() {
       button: "Book Now",
       icon: <FaClipboardCheck className="text-2xl text-white" />,
       time: "5-10 minutes",
-      color: "from-green-500 to-green-600",
+      color: "from-blue-500 to-emerald-500",
     },
     {
       id: 3,
@@ -50,19 +50,19 @@ export default function HowItWorks() {
       button: "Learn More",
       icon: <FaHome className="text-2xl text-white" />,
       time: "Day 1 onwards",
-      color: "from-pink-500 to-purple-500",
+      color: "from-blue-500 to-emerald-500",
     },
   ];
 
   return (
-    <section className="py-16 bg-white" id="how-it-works">
+    <section className="py-16 bg-gray-50" id="how-it-works">
       {/* Heading */}
       <div className="text-center mb-12">
-        <span className="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm font-medium">
+        <span className="px-4 py-1 bg-gradient-to-r from-blue-500 to-emerald-500 text-white text-sm font-semibold rounded-full shadow">
           Simple Process
         </span>
         <h2 className="text-3xl md:text-4xl font-bold mt-4">
-          How It <span className="text-blue-600">Works</span>
+          How It <span className="text-emerald-500">Works</span>
         </h2>
         <p className="mt-2 text-gray-600 max-w-2xl mx-auto">
           Booking your perfect student accommodation has never been easier. Our
@@ -82,7 +82,7 @@ export default function HowItWorks() {
             key={i}
             className="bg-white shadow rounded-lg p-6 text-center border"
           >
-            <p className="text-xl font-bold text-blue-600">{stat.text}</p>
+            <p className="text-xl font-bold text-emerald-600">{stat.text}</p>
             <p className="text-sm text-gray-600">{stat.sub}</p>
           </div>
         ))}
@@ -93,7 +93,7 @@ export default function HowItWorks() {
         {steps.map((step) => (
           <div
             key={step.id}
-            className="relative bg-white shadow-lg rounded-xl p-6 border"
+            className="relative bg-white shadow-lg rounded-xl p-6 border hover:shadow-xl transition"
           >
             {/* Number Badge */}
             <div
@@ -115,20 +115,20 @@ export default function HowItWorks() {
             </div>
 
             <h3 className="text-lg font-semibold mb-1">{step.title}</h3>
-            <p className="text-blue-600 font-medium mb-2">{step.subtitle}</p>
+            <p className="text-emerald-600 font-medium mb-2">{step.subtitle}</p>
             <p className="text-gray-600 text-sm mb-4">{step.desc}</p>
 
             <ul className="space-y-2 text-sm text-gray-700 mb-4">
               {step.highlights.map((item, i) => (
                 <li key={i} className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                  <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
                   {item}
                 </li>
               ))}
             </ul>
 
             <button
-              className={`w-full border rounded-lg py-2 text-sm font-medium hover:shadow bg-white`}
+              className={`w-full border rounded-lg py-2 text-sm font-medium hover:shadow bg-gradient-to-r ${step.color} text-white`}
             >
               {step.button}
             </button>

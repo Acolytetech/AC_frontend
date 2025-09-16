@@ -80,12 +80,12 @@ export default function HomePage() {
 
 
       <TrustedSection/>
+      {loading ? <Loader /> : <PropertyGrid properties={properties} />}
       {/* Loader / Property Grid */}
       <h2 className="text-3xl font-bold mb-6 text-center bg-white text-blue-600 my-10">Best Booking sites</h2>
-      {loading ? <Loader /> : <PropertyGrid properties={properties} />}
+      <HowItWorks/>
 
       <WhyChooseSection/>
-      <HowItWorks/>
     </div>
   );
 }
