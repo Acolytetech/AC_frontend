@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import API from "@/lib/api"; // axios instance
-import PropertyGrid from "@/components/home/PropertyGrid";
 import "./globals.css";
 import Hero from "@/components/home/Hero";
+import HowItWorks from "@/components/home/HowItWorks";
 import TrustedSection from "@/components/home/TrustedSection";
 import WhyChooseSection from "@/components/home/WhyChooseSection";
-import HowItWorks from "@/components/home/HowItWorks";
+import PropertyGrid from "@/components/home/PropertyGrid";
 
 // Property type
 interface Property {
