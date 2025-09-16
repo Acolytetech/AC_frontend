@@ -19,7 +19,20 @@ export default function SearchPage() {
 
   return (
     <div className="p-4">
-      <input placeholder="Location" onChange={e => setQuery({...query, location: e.target.value})} className="border p-2 mb-2"/>
+{/* Location Dropdown */}
+<select
+  value={query.location}
+  onChange={(e) => setQuery({ ...query, location: e.target.value })}
+  className="border p-2 mb-2 w-full"
+>
+  <option value="">Select Location</option>
+  <option value="Mansarovar">Mansarovar</option>
+  <option value="Jagatpura">Jagatpura</option>
+  <option value="Sitapura">Sitapura</option>
+  <option value="Ajmer Road">Ajmer Road</option>
+  <option value="V2 Bypass">V2 Bypass</option>
+  <option value="200 Feet Bypass">200 Feet Bypass</option>
+</select>
       <select onChange={e => setQuery({...query, type: e.target.value})} className="border p-2 mb-2">
         <option value="rent">Rent</option>
         <option value="lease">Lease</option>

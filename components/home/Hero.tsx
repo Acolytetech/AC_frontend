@@ -108,13 +108,20 @@ const handleSearch = async () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
           className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg flex flex-col md:flex-row gap-3 w-full ">
-            <input
-              type="text"
-              placeholder="Location"
-              className="border px-3 py-2 rounded flex-1"
-              value={search.location}
-              onChange={(e) => setSearch({ ...search, location: e.target.value })}
-            />
+          <select
+  value={search.location}
+  onChange={(e) => setSearch({ ...search, location: e.target.value })}
+  className="border px-3 py-2 rounded flex-1"
+>
+  <option value="">Select Location</option>
+  <option value="Mansarovar">Mansarovar</option>
+  <option value="Jagatpura">Jagatpura</option>
+  <option value="Sitapura">Sitapura</option>
+  <option value="Ajmer Road">Ajmer Road</option>
+  <option value="V2 Bypass">V2 Bypass</option>
+  <option value="200 Feet Bypass">200 Feet Bypass</option>
+</select>
+
             <input
               type="text"
               placeholder="BHK (e.g. 2BHK)"

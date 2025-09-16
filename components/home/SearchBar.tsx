@@ -14,18 +14,38 @@ interface SearchBarProps {
   onSearch: () => void;
 }
 
-export default function SearchBar({ search, setSearch, onSearch }: SearchBarProps) {
+export default function SearchBar({
+  search,
+  setSearch,
+  onSearch,
+}: SearchBarProps) {
+  const locations = [
+    "Mansarovar",
+    "Jagatpura",
+    "Sitapura",
+    "Ajmer Road",
+    "Vidhyadhar Nagar",
+    "Vaishali Nagar",
+    "Tonk Road",
+    "200 Feet Bypass",
+  ];
+
   return (
     <div className="w-full mx-auto mb-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        {/* Location */}
-        <input
-          type="text"
-          placeholder="Location"
+        {/* Location Dropdown */}
+        <select
           value={search.location}
           onChange={(e) => setSearch({ ...search, location: e.target.value })}
           className="border p-2 rounded w-full"
-        />
+        >
+          <option value="">Select Location</option>
+          {locations.map((loc, i) => (
+            <option key={i} value={loc}>
+              {loc}
+            </option>
+          ))}
+        </select>
 
         {/* Type */}
         <select
