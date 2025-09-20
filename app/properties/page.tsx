@@ -90,6 +90,7 @@ export default function PropertiesPage() {
         )}
       </section>
 
+        <TrustedSection />
       {/* Most Booked */}
       <section className="max-w-7xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-bold mb-6">
@@ -103,7 +104,6 @@ export default function PropertiesPage() {
       </section>
 
       {/* Trusted Section */}
-      <TrustedSection />
     </main>
   );
 }
