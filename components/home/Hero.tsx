@@ -8,7 +8,7 @@ import {motion} from "framer-motion"
 
 // Property type
 export interface Property {
-  id: number;
+  _id: number;
   title: string;
   location: string;
   bhk: string;
@@ -91,8 +91,8 @@ const handleSearch = async () => {
         />
 
         {/* Overlay */}
-        <motion.div 
-        
+        <motion.div
+
         className="absolute  inset-0 bg-black/50 flex flex-col justify-center items-center text-center px-10">
           <motion.h1    initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -103,7 +103,7 @@ const handleSearch = async () => {
           {/* Search Bar Wrapper */}
           <motion.div
 
-          
+
              initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}

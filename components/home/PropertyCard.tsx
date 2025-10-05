@@ -7,11 +7,13 @@ import { useRouter } from "next/navigation"; // ✅ useRouter hook
 export default function PropertyCard({ property }: { property: Property }) {
   const router = useRouter(); // ✅ initialize router
   // console.log(property);
+const id = property._id;
+// onClick={() => router.push(`/properties/${id}`)}
 
   return (
     <div className="relative border rounded shadow hover:shadow-lg transition overflow-hidden">
       <Image
-        src={`https://picsum.photos/seed/${property.id}/300/200`}
+        src={`https://picsum.photos/seed/${property._id}/300/200`}
         alt={property.title}
         width={300}
         height={200}
@@ -24,7 +26,7 @@ export default function PropertyCard({ property }: { property: Property }) {
         <p>Price: ₹{property.price}</p>
         <p>Type: {property.type}</p>
         <button
-          onClick={() => router.push(`/properties/${property._id}`)} // ✅ use router.push
+          onClick={() => router.push(`/properties/${id}`)} // ✅ use router.push
           className="absolute bottom-1 right-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-103"
         >
           View Property
