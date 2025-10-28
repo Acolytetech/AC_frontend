@@ -8,7 +8,7 @@ import {motion} from "framer-motion"
 
 // Property type
 export interface Property {
-  _id: number;
+  id: number;
   title: string;
   location: string;
   bhk: string;
