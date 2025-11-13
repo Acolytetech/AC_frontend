@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     domains: [
       "picsum.photos",
       "images.unsplash.com",
+      "i.pinimg.com",
       "res.cloudinary.com", // ✅ Added Cloudinary domain
     ],
   },

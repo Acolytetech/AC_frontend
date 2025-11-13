@@ -83,7 +83,7 @@ const handleSearch = async () => {
       <section className="relative w-full h-screen md:h-[600px]">
         {/* Background Image */}
         <Image
-          src={`https://picsum.photos/1600/900?random=${Math.floor(Math.random() * 1000)}`}
+          src={`https://i.pinimg.com/1200x/60/c9/82/60c982a049af926938fb8d3df2df6738.jpg`}
           alt="Jaipur Apartments"
           fill
           className="object-cover object-center"

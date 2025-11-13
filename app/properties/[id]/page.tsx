@@ -17,6 +17,7 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { BsWhatsapp } from "react-icons/bs";
 
 interface Property {
   id: number;
@@ -153,7 +154,7 @@ export default function PropertyPage({ params }: Props) {
         {/* Contact Card */}
         <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-xl shadow-lg p-6 flex flex-col justify-between">
           <div className="space-y-3">
-            <h3 className="text-2xl font-semibold mb-2">Contact the Owner</h3>
+            <h3 className="text-2xl font-semibold mb-2">Contact the Dealer</h3>
             <p className="text-sm opacity-80">
               Reach out directly to get more details or schedule a visit.
             </p>
@@ -167,6 +168,16 @@ export default function PropertyPage({ params }: Props) {
                 <FaPhoneAlt /> 9664455006
                  {/* {property.contact.phone} */}
               </p>
+               {/* {property.ownerName && ( */}
+              <p className="font-medium text-lg">
+                {/* {property.ownerName} */}
+              Sandeep Patodiya</p>
+            {/* )} */}
+            {/* {property.contact?.phone && ( */}
+              <p className="flex items-center gap-2 text-lg font-bold mt-2">
+                <FaPhoneAlt /> 1234567890
+                 {/* {property.contact.phone} */}
+              </p>
             {/* )} */}
             {property.contact?.email && (
               <p className="flex items-center gap-2 text-sm">
@@ -175,9 +186,18 @@ export default function PropertyPage({ params }: Props) {
             )}
           </div>
 
-          <button className="mt-6 bg-white text-blue-700 font-semibold px-5 py-3 rounded-lg hover:bg-blue-50 transition">
-            Contact Now
-          </button>
+       <button
+  onClick={() => {
+    const currentUrl = window.location.href;
+    const message = `Hi, I am interested in this property: ${currentUrl}
+    property Name : ${property.title}`;
+    const whatsappUrl = `https://wa.me/919664455006?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank");
+  }}
+  className="mt-6 flex align-middle justify-center items-center gap-1 text-lg bg-green-500 text-white font-semibold px-5 py-3 rounded-lg hover:bg-green-400 transition"
+>
+  <BsWhatsapp/> Contact Now
+</button>
         </div>
       </div>
 
