@@ -1,35 +1,61 @@
 "use client";
 
 import Image from "next/image";
-import { Property } from "@/components/home/Hero";
-import { useRouter } from "next/navigation"; // ✅ useRouter hook
+import { Property } from "@/app/properties/page";
+import { useRouter } from "next/navigation";
 
 export default function PropertyCard({ property }: { property: Property }) {
-  const router = useRouter(); // ✅ initialize router
-  // console.log(property);
-const id = property._id;
-// onClick={() => router.push(`/properties/${id}`)}
+  const router = useRouter();
+  const id = property._id;
+
+  // Real Image (Cloudinary) else fallback
+  const imageUrl =
+    property.images && property.images.length > 0
+      ? property.images[0]
+      : `https://picsum.photos/seed/${property._id}/600/400`;
 
   return (
-    <div className="relative border rounded shadow hover:shadow-lg transition overflow-hidden">
+    <div
+      className="relative border rounded-xl bg-white shadow hover:shadow-xl transition overflow-hidden cursor-pointer"
+      onClick={() => router.push(`/properties/${id}`)}
+    >
+      {/* Image */}
       <Image
-        src={`https://picsum.photos/seed/${property._id}/300/200`}
+        src={imageUrl}
         alt={property.title}
-        width={300}
-        height={200}
-        className="object-cover w-full h-48"
+        width={400}
+        height={260}
+        className="object-cover w-full h-56"
       />
+
+      {/* Content */}
       <div className="p-4">
-        <h2 className="text-xl font-semibold">{property.title}</h2>
-        <p>Location: {property.location}</p>
-        <p>BHK: {property.bhk}</p>
-        <p>Price: ₹{property.price}</p>
-        <p>Type: {property.type}</p>
+        <h2 className="text-lg font-bold text-gray-900">{property.title}</h2>
+
+        <p className="text-gray-600 text-sm">
+          {property.area ? `${property.area}, ` : ""}{property.city}
+        </p>
+
+        {/* Price */}
+        <p className="mt-2 text-blue-600 font-semibold text-lg">
+          ₹{property.price?.value}{" "}
+          <span className="text-sm text-gray-600">{property.price?.unit}</span>
+        </p>
+
+        {/* Property Type */}
+        <p className="mt-1 text-sm text-gray-700 capitalize">
+          Type: <span className="font-medium">{property.propertyType}</span>
+        </p>
+
+        {/* CTA Button */}
         <button
-          onClick={() => router.push(`/properties/${id}`)} // ✅ use router.push
-          className="absolute bottom-1 right-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-103"
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(`/properties/${id}`);
+          }}
+          className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition"
         >
-          View Property
+          View Details
         </button>
       </div>
     </div>

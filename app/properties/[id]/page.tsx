@@ -14,23 +14,34 @@ import {
 } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
+
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+
 import { BsWhatsapp } from "react-icons/bs";
 
 interface Property {
-  id: number;
+  _id: string;
   title: string;
-  location: string;
-  type: string;
-  bhk: number | string;
-  price: number | string;
   description?: string;
+
+  // location fields
+  city?: string;
+  area?: string;
+  location?: string;
+
+  price?: {
+    value: number;
+    unit: string;
+  };
+
+  bhk?: number | string;
+  propertyType?: string;
+
   images?: string[];
-  ownerName?: string;
-  contact?: {
-    phone?: string;
+  listedBy?: {
+    name?: string;
     email?: string;
   };
 }
@@ -40,20 +51,20 @@ interface Props {
 }
 
 export default function PropertyPage({ params }: Props) {
-  const unwrappedParams = use(params);
+  const { id } = use(params);
   const [property, setProperty] = useState<Property | null>(null);
 
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const res = await API.get(`/properties/${unwrappedParams.id}`);
-        setProperty(res.data);
+        const res = await API.get(`/properties/${id}`);
+        setProperty(res.data?.property || res.data); // supports both formats
       } catch (err) {
         console.error(err);
       }
     };
     fetchProperty();
-  }, [unwrappedParams.id]);
+  }, [id]);
 
   if (!property) {
     return (
@@ -63,28 +74,27 @@ export default function PropertyPage({ params }: Props) {
     );
   }
 
-  // fallback demo images if API has none
+  // fallback image
   const propertyImages =
     property.images && property.images.length > 0
       ? property.images
-      : [
-          `https://picsum.photos/seed/${property.id}/800/400`,
-
-        ];
+      : [`https://picsum.photos/seed/${property._id}/900/500`];
 
   return (
     <div className="max-w-6xl mx-auto px-4 md:px-8 py-10 space-y-10">
-      {/* === HEADER === */}
+      {/* ==== HEADER ==== */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
           {property.title}
         </h1>
+
         <p className="text-blue-600 font-semibold text-lg bg-blue-50 px-4 py-2 rounded-md">
-          ₹{property.price}
+          ₹{property.price?.value}{" "}
+          <span className="text-gray-600 text-sm">{property.price?.unit}</span>
         </p>
       </div>
 
-      {/* === IMAGE CAROUSEL === */}
+      {/* ==== CAROUSEL ==== */}
       <div className="relative rounded-2xl overflow-hidden shadow-lg">
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
@@ -107,101 +117,107 @@ export default function PropertyPage({ params }: Props) {
           ))}
         </Swiper>
 
-        {/* Location badge */}
-        <div className="absolute bottom-4 left-4 bg-black/60 text-white px-4 py-2 rounded-lg text-sm md:text-base flex items-center gap-2">
-          <FaMapMarkerAlt className="text-red-400" /> {property.location}
+        {/* Location Badge */}
+        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-4 py-2 rounded-lg text-sm md:text-base flex items-center gap-2">
+          <FaMapMarkerAlt className="text-red-400" />
+
+          {property.area ? `${property.area}, ` : ""}
+          {property.city || property.location}
         </div>
       </div>
 
-      {/* === PROPERTY INFO === */}
+      {/* ==== MAIN DETAILS ==== */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Quick Info */}
+        {/* Overview */}
         <div className="col-span-2 bg-white rounded-xl shadow-md p-6 space-y-4">
           <h2 className="text-2xl font-semibold text-gray-800 mb-3">
             Property Overview
           </h2>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-gray-700">
             <p className="flex items-center gap-2">
-              <FaMapMarkerAlt className="text-blue-600" />{" "}
-              <strong>Location:</strong> {property.location}
+              <FaMapMarkerAlt className="text-blue-600" />
+              <strong>Location:</strong>&nbsp;
+              {property.area ? `${property.area}, ` : ""}
+              {property.city || property.location}
             </p>
+
             <p className="flex items-center gap-2">
-              <FaBed className="text-green-600" /> <strong>BHK:</strong>{" "}
-              {property.bhk}
+              <FaBed className="text-green-600" />
+              <strong>BHK:</strong> {property.bhk}
             </p>
+
             <p className="flex items-center gap-2">
-              <FaDollarSign className="text-yellow-600" />{" "}
-              <strong>Price:</strong> ₹{property.price}
+              <FaDollarSign className="text-yellow-600" />
+              <strong>Price:</strong> ₹{property.price?.value}{" "}
+              {property.price?.unit}
             </p>
+
             <p className="flex items-center gap-2">
-              <FaHome className="text-purple-600" /> <strong>Type:</strong>{" "}
-              {property.type}
+              <FaHome className="text-purple-600" />
+              <strong>Type:</strong> {property.propertyType}
             </p>
           </div>
 
-          {/* Description */}
           <div className="mt-6 border-t border-gray-200 pt-4">
             <h3 className="text-xl font-semibold flex items-center gap-2 text-gray-800 mb-2">
               <FaInfoCircle className="text-blue-500" /> About This Property
             </h3>
+
             <p className="text-gray-600 leading-relaxed">
               {property.description ||
-                "A beautiful and spacious property located in a peaceful area. Ideal for families, students, or working professionals. Close to essential amenities and public transport."}
+                "A beautiful and spacious property located in a peaceful area near essential amenities."}
             </p>
           </div>
         </div>
 
-        {/* Contact Card */}
+        {/* ==== CONTACT CARD ==== */}
         <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-xl shadow-lg p-6 flex flex-col justify-between">
           <div className="space-y-3">
             <h3 className="text-2xl font-semibold mb-2">Contact the Dealer</h3>
+
             <p className="text-sm opacity-80">
               Reach out directly to get more details or schedule a visit.
             </p>
-            {/* {property.ownerName && ( */}
-              <p className="font-medium text-lg">
-                {/* {property.ownerName} */}
-                Sachin Lawaniya   </p>
-            {/* )} */}
-            {/* {property.contact?.phone && ( */}
-              <p className="flex items-center gap-2 text-lg font-bold mt-2">
-                <FaPhoneAlt /> 9664455006
-                 {/* {property.contact.phone} */}
-              </p>
-               {/* {property.ownerName && ( */}
-              <p className="font-medium text-lg">
-                {/* {property.ownerName} */}
-              Sandeep Patodiya</p>
-            {/* )} */}
-            {/* {property.contact?.phone && ( */}
-              <p className="flex items-center gap-2 text-lg font-bold mt-2">
-                <FaPhoneAlt /> 1234567890
-                 {/* {property.contact.phone} */}
-              </p>
-            {/* )} */}
-            {property.contact?.email && (
+
+            <p className="font-medium text-lg">Sachin Lawaniya</p>
+
+            <p className="flex items-center gap-2 text-lg font-bold mt-2">
+              <FaPhoneAlt /> 9664455006
+            </p>
+
+            <p className="font-medium text-lg">Sandeep Patodiya</p>
+
+            <p className="flex items-center gap-2 text-lg font-bold mt-2">
+              <FaPhoneAlt /> 1234567890
+            </p>
+
+            {property.listedBy?.email && (
               <p className="flex items-center gap-2 text-sm">
-                <FaEnvelope /> {property.contact.email}
+                <FaEnvelope /> {property.listedBy.email}
               </p>
             )}
           </div>
 
-       <button
-  onClick={() => {
-    const currentUrl = window.location.href;
-    const message = `Hi, I am interested in this property: ${currentUrl}
-    property Name : ${property.title}`;
-    const whatsappUrl = `https://wa.me/919664455006?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank");
-  }}
-  className="mt-6 flex align-middle justify-center items-center gap-1 text-lg bg-green-500 text-white font-semibold px-5 py-3 rounded-lg hover:bg-green-400 transition"
->
-  <BsWhatsapp/> Contact Now
-</button>
+          {/* WhatsApp Button */}
+          <button
+            onClick={() => {
+              const url = window.location.href;
+              const msg = `Hi, I am interested in this property.\n\nProperty Name: ${property.title}\nLink: ${url}`;
+              const whatsapp = `https://wa.me/919664455006?text=${encodeURIComponent(
+                msg
+              )}`;
+              window.open(whatsapp, "_blank");
+            }}
+            className="mt-6 flex justify-center items-center gap-2 text-lg bg-green-500 text-white font-semibold px-5 py-3 rounded-lg hover:bg-green-400 transition"
+          >
+            <BsWhatsapp />
+            Contact Now
+          </button>
         </div>
       </div>
 
-      {/* === ADDITIONAL SECTION === */}
+      {/* ==== Highlights ==== */}
       <div className="bg-gray-50 rounded-xl p-6 mt-10 shadow-inner">
         <h3 className="text-xl font-semibold text-gray-800 mb-4">
           Nearby Highlights
@@ -209,7 +225,7 @@ export default function PropertyPage({ params }: Props) {
         <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-gray-600">
           <li>🏫 Schools & Colleges Nearby</li>
           <li>🛒 Shopping Centers within 2km</li>
-          <li>🚇 Metro/Bus Stop Accessibility</li>
+          <li>🚇 Metro / Bus Stop Accessibility</li>
           <li>🏥 Hospitals within 3km</li>
           <li>🌳 Parks & Green Spaces</li>
           <li>🍴 Cafes & Restaurants Nearby</li>

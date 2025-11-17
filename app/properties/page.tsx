@@ -5,16 +5,20 @@ import PropertyGrid from "@/components/home/PropertyGrid";
 import TrustedSection from "@/components/home/TrustedSection";
 import HowItWorks from "@/components/home/HowItWorks";
 import { useEffect, useState } from "react";
-import API from "@/lib/api"; // axios instance
+import API from "@/lib/api";
 
-// Property type
+// Updated Interface Based on Backend
 export interface Property {
-  id: number;
+  _id: string;
   title: string;
-  location: string;
-  bhk: string;
-  price: number;
-  type: string;
+  tagline: string;
+  city: string;
+  area: string;
+  price: {
+    value: number;
+    unit: string;
+  };
+  propertyType: string;
   images?: string[];
 }
 
@@ -28,7 +32,11 @@ export default function PropertiesPage() {
       setLoading(true);
       try {
         const res = await API.get("/properties");
-        setAllProperties(res.data || []);
+
+        // Backend returns { success, count, properties }
+        const list = res.data?.properties || [];
+
+        setAllProperties(list);
       } catch (err) {
         console.error("Error fetching properties", err);
       } finally {
@@ -39,15 +47,15 @@ export default function PropertiesPage() {
   }, []);
 
   // Derived sections
-  const bestSelling = [...allProperties]
-    .sort((a, b) => b.price - a.price)
-    .slice(0, 6);
+  const bestSelling = [...allProperties].sort(
+    (a, b) => (b.price?.value || 0) - (a.price?.value || 0)
+  );
 
-  const bestLocation = allProperties
-    .filter((p) => p.location.toLowerCase().includes("jaipur")) // 👈 filter example
-    .slice(0, 6);
+  const bestLocation = allProperties.filter(
+    (p) => p.city?.toLowerCase().includes("jaipur") // example
+  );
 
-  const mostBooked = [...allProperties].slice(0, 6); // 👈 future mein API se booking count ke base pe karenge
+  const mostBooked = [...allProperties]; // Future: booking count
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -90,7 +98,8 @@ export default function PropertiesPage() {
         )}
       </section>
 
-        <TrustedSection />
+      <TrustedSection />
+
       {/* Most Booked */}
       <section className="max-w-7xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-bold mb-6">
@@ -102,8 +111,6 @@ export default function PropertiesPage() {
           <PropertyGrid properties={mostBooked} />
         )}
       </section>
-
-      {/* Trusted Section */}
     </main>
   );
 }
