@@ -1,26 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import API from "@/lib/api"; // axios instance
-import "./globals.css";
+import API from "@/lib/api";
+
 import Hero from "@/components/home/Hero";
 import HowItWorks from "@/components/home/HowItWorks";
 import TrustedSection from "@/components/home/TrustedSection";
 import WhyChooseSection from "@/components/home/WhyChooseSection";
 import PropertyGrid from "@/components/home/PropertyGrid";
 
-// Property type
-interface Property {
-  id: number;
+export interface Property {
+  _id: string;
   title: string;
-  location: string;
-  bhk: string;
-  price: number;
-  type: string;
+  tagline: string;
+  city: string;
+  area: string;
+  price: {
+    value: number;
+    unit: string;
+  };
+  propertyType: string;
   images?: string[];
 }
 
-// Loader component
 function Loader() {
   return <div className="text-center py-4 text-gray-500">Loading...</div>;
 }
@@ -28,23 +30,17 @@ function Loader() {
 export default function HomePage() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState({
-    location: "",
-    type: "rent",
-    bhk: "",
-    minPrice: "",
-    maxPrice: "",
-  });
 
-  // Fetch all properties
   const fetchProperties = async () => {
     setLoading(true);
     try {
       const res = await API.get("/properties");
-      setProperties(res.data); // assuming array of properties
+      const list =
+        res.data.properties || res.data.data || res.data || [];
+
+      setProperties(Array.isArray(list) ? list : []);
     } catch (err) {
       console.error(err);
-      alert("Error fetching properties");
     } finally {
       setLoading(false);
     }
@@ -54,38 +50,52 @@ export default function HomePage() {
     fetchProperties();
   }, []);
 
-  // Search function
-  const handleSearch = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams(
-        Object.fromEntries(
-          Object.entries(search).filter(([_, v]) => v !== "")
-        )
-      ).toString();
+const handleSearch = async (filters: any) => {
+  setLoading(true);
 
-      const res = await API.get(`/properties/search?${params}`);
-      setProperties(res.data);
-    } catch (err) {
-      console.error(err);
-      alert("Error searching properties");
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const filtered = Object.fromEntries(
+      Object.entries(filters)
+        .filter(([_, v]) => v !== "" && v !== null && v !== undefined)
+        .map(([k, v]) => [k, String(v)]) // 👈 FORCE string values
+    );
+
+    const params = new URLSearchParams(filtered).toString();
+
+    const res = await API.get(`/properties/search?${params}`);
+
+    const list =
+      res.data.properties || res.data.data || res.data || [];
+
+    setProperties(Array.isArray(list) ? list : []);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
-    <div className="">
-      <Hero/>
+    <div>
+      {/* Hero receives search function */}
+      <Hero onSearch={handleSearch} />
 
 
-      <TrustedSection/>
-      {/* Loader / Property Grid */}
-      <h2 className="text-3xl font-bold mb-6 text-center bg-white text-blue-600 my-10">Best Booking sites</h2>
+      <h2 className="text-3xl font-bold mb-6 text-center text-blue-600 my-10">
+        Best Booking Sites
+      </h2>
+
       {loading ? <Loader /> : <PropertyGrid properties={properties} />}
-      <HowItWorks/>
+      <TrustedSection />x
 
-      <WhyChooseSection/>
+      <h2 className="text-3xl font-bold mb-6 text-center text-blue-600 my-10">
+        most loved Sites
+      </h2>
+
+      {loading ? <Loader /> : <PropertyGrid properties={properties} />}
+      <HowItWorks />
+      <WhyChooseSection />
     </div>
   );
 }

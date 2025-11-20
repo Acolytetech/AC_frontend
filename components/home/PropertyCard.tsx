@@ -20,12 +20,11 @@ export default function PropertyCard({ property }: { property: Property }) {
       onClick={() => router.push(`/properties/${id}`)}
     >
       {/* Image */}
-      <Image
+      <img
         src={imageUrl}
         alt={property.title}
-        width={400}
-        height={260}
-        className="object-cover w-full h-56"
+
+        className="object-cover object-center w-full h-[300px]"
       />
 
       {/* Content */}
@@ -55,7 +54,7 @@ export default function PropertyCard({ property }: { property: Property }) {
           }}
           className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition"
         >
-          View Details
+          View Property
         </button>
       </div>
     </div>
