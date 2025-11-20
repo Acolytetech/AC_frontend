@@ -12,6 +12,7 @@ import {
   FaPhoneAlt,
   FaEnvelope,
 } from "react-icons/fa";
+import { BsWhatsapp } from "react-icons/bs";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
@@ -19,33 +20,30 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-import { BsWhatsapp } from "react-icons/bs";
-
+// PROPERTY INTERFACE
 interface Property {
   _id: string;
   title: string;
-  description?: string;
+  tagline?: string;
+  overview?: string;
 
-  // location fields
-  city?: string;
-  area?: string;
-  location?: string;
+  location?: {
+    city?: string;
+    area?: string;
+    landmark?: string;
+  };
 
   price?: {
     value: number;
     unit: string;
   };
 
-  bhk?: number | string;
-  propertyType?: string;
-
+  bhk?: string;
+  type?: string;
   images?: string[];
-  listedBy?: {
-    name?: string;
-    email?: string;
-  };
 }
 
+// PARAMS
 interface Props {
   params: Promise<{ id: string }>;
 }
@@ -54,11 +52,21 @@ export default function PropertyPage({ params }: Props) {
   const { id } = use(params);
   const [property, setProperty] = useState<Property | null>(null);
 
+  // Lead Popup
+  const [showForm, setShowForm] = useState(false);
+  const [lead, setLead] = useState({
+    userName: "",
+    userEmail: "",
+    userPhone: "",
+    message: "",
+  });
+
+  // Fetch Property
   useEffect(() => {
     const fetchProperty = async () => {
       try {
         const res = await API.get(`/properties/${id}`);
-        setProperty(res.data?.property || res.data); // supports both formats
+        setProperty(res.data?.property || res.data);
       } catch (err) {
         console.error(err);
       }
@@ -68,39 +76,60 @@ export default function PropertyPage({ params }: Props) {
 
   if (!property) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh] text-gray-600 text-lg">
+      <div className="flex justify-center items-center min-h-[60vh] text-gray-600">
         Loading property details...
       </div>
     );
   }
 
-  // fallback image
+  // Images
   const propertyImages =
-    property.images && property.images.length > 0
+    property.images?.length
       ? property.images
       : [`https://picsum.photos/seed/${property._id}/900/500`];
 
+  // Submit Lead
+  const submitLead = async (e: any) => {
+    e.preventDefault();
+
+    try {
+      await API.post(`/leads`, {
+        propertyId: property._id,
+        userName: lead.userName,
+        userEmail: lead.userEmail,
+        userPhone: lead.userPhone,
+        message: lead.message,
+      });
+
+      alert("Lead submitted successfully!");
+      setShowForm(false);
+      setLead({ userName: "", userEmail: "", userPhone: "", message: "" });
+    } catch (err: any) {
+      alert("Error: " + err?.response?.data?.message);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4 md:px-8 py-10 space-y-10">
-      {/* ==== HEADER ==== */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
           {property.title}
         </h1>
 
         <p className="text-blue-600 font-semibold text-lg bg-blue-50 px-4 py-2 rounded-md">
-          ₹{property.price?.value}{" "}
-          <span className="text-gray-600 text-sm">{property.price?.unit}</span>
+          ₹{property.price?.value}
+          <span className="text-gray-600 text-sm"> {property.price?.unit}</span>
         </p>
       </div>
 
-      {/* ==== CAROUSEL ==== */}
+      {/* CAROUSEL */}
       <div className="relative rounded-2xl overflow-hidden shadow-lg">
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
           navigation
           pagination={{ clickable: true }}
-          autoplay={{ delay: 3000, disableOnInteraction: false }}
+          autoplay={{ delay: 3000 }}
           loop
           className="w-full h-[400px] md:h-[500px]"
         >
@@ -108,129 +137,134 @@ export default function PropertyPage({ params }: Props) {
             <SwiperSlide key={i}>
               <Image
                 src={img}
-                alt={`Property image ${i + 1}`}
+                alt="image"
                 width={1200}
                 height={600}
-                className="w-full h-[400px] md:h-[500px] object-cover"
+                className="w-full h-[500px] object-cover"
               />
             </SwiperSlide>
           ))}
         </Swiper>
 
-        {/* Location Badge */}
-        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-4 py-2 rounded-lg text-sm md:text-base flex items-center gap-2">
-          <FaMapMarkerAlt className="text-red-400" />
-
-          {property.area ? `${property.area}, ` : ""}
-          {property.city || property.location}
+        {/* BADGE */}
+        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+          <FaMapMarkerAlt />
+          {property.location?.area}, {property.location?.city}
         </div>
       </div>
 
-      {/* ==== MAIN DETAILS ==== */}
+      {/* DETAILS SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Overview */}
-        <div className="col-span-2 bg-white rounded-xl shadow-md p-6 space-y-4">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-3">
-            Property Overview
-          </h2>
+        {/* LEFT INFO */}
+        <div className="col-span-2 bg-white rounded-xl shadow-md p-6">
+          <h2 className="text-2xl font-semibold mb-3">Overview</h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-gray-700">
-            <p className="flex items-center gap-2">
-              <FaMapMarkerAlt className="text-blue-600" />
-              <strong>Location:</strong>&nbsp;
-              {property.area ? `${property.area}, ` : ""}
-              {property.city || property.location}
+          <p className="text-gray-700 whitespace-pre-line">
+            {property.overview || "Details not available."}
+          </p>
+
+          <h3 className="text-xl font-semibold mt-6 mb-2 flex items-center gap-2">
+            <FaInfoCircle /> Property Details
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-700">
+            <p>
+              <strong>City:</strong> {property.location?.city}
             </p>
-
-            <p className="flex items-center gap-2">
-              <FaBed className="text-green-600" />
-              <strong>BHK:</strong> {property.bhk}
+            <p>
+              <strong>Area:</strong> {property.location?.area}
             </p>
-
-            <p className="flex items-center gap-2">
-              <FaDollarSign className="text-yellow-600" />
-              <strong>Price:</strong> ₹{property.price?.value}{" "}
-              {property.price?.unit}
+            <p>
+              <strong>Landmark:</strong> {property.location?.landmark}
             </p>
-
-            <p className="flex items-center gap-2">
-              <FaHome className="text-purple-600" />
-              <strong>Type:</strong> {property.propertyType}
-            </p>
-          </div>
-
-          <div className="mt-6 border-t border-gray-200 pt-4">
-            <h3 className="text-xl font-semibold flex items-center gap-2 text-gray-800 mb-2">
-              <FaInfoCircle className="text-blue-500" /> About This Property
-            </h3>
-
-            <p className="text-gray-600 leading-relaxed">
-              {property.description ||
-                "A beautiful and spacious property located in a peaceful area near essential amenities."}
+            <p>
+              <strong>Type:</strong> {property.type}
             </p>
           </div>
         </div>
 
-        {/* ==== CONTACT CARD ==== */}
+        {/* CONTACT CARD */}
         <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-xl shadow-lg p-6 flex flex-col justify-between">
-          <div className="space-y-3">
-            <h3 className="text-2xl font-semibold mb-2">Contact the Dealer</h3>
+          <div>
+            <h3 className="text-2xl font-semibold mb-2">Contact Dealer</h3>
 
-            <p className="text-sm opacity-80">
-              Reach out directly to get more details or schedule a visit.
-            </p>
-
-            <p className="font-medium text-lg">Sachin Lawaniya</p>
-
+            {/* Hardcoded Numbers */}
             <p className="flex items-center gap-2 text-lg font-bold mt-2">
               <FaPhoneAlt /> 9664455006
             </p>
-
-            <p className="font-medium text-lg">Sandeep Patodiya</p>
-
             <p className="flex items-center gap-2 text-lg font-bold mt-2">
               <FaPhoneAlt /> 1234567890
             </p>
-
-            {property.listedBy?.email && (
-              <p className="flex items-center gap-2 text-sm">
-                <FaEnvelope /> {property.listedBy.email}
-              </p>
-            )}
           </div>
 
-          {/* WhatsApp Button */}
           <button
-            onClick={() => {
-              const url = window.location.href;
-              const msg = `Hi, I am interested in this property.\n\nProperty Name: ${property.title}\nLink: ${url}`;
-              const whatsapp = `https://wa.me/919664455006?text=${encodeURIComponent(
-                msg
-              )}`;
-              window.open(whatsapp, "_blank");
-            }}
-            className="mt-6 flex justify-center items-center gap-2 text-lg bg-green-500 text-white font-semibold px-5 py-3 rounded-lg hover:bg-green-400 transition"
+            onClick={() => setShowForm(true)}
+            className="mt-6 w-full bg-white text-blue-700 font-semibold px-5 py-3 rounded-lg"
           >
-            <BsWhatsapp />
-            Contact Now
+            Enquire Now
           </button>
         </div>
       </div>
 
-      {/* ==== Highlights ==== */}
-      <div className="bg-gray-50 rounded-xl p-6 mt-10 shadow-inner">
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">
-          Nearby Highlights
-        </h3>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-gray-600">
-          <li>🏫 Schools & Colleges Nearby</li>
-          <li>🛒 Shopping Centers within 2km</li>
-          <li>🚇 Metro / Bus Stop Accessibility</li>
-          <li>🏥 Hospitals within 3km</li>
-          <li>🌳 Parks & Green Spaces</li>
-          <li>🍴 Cafes & Restaurants Nearby</li>
-        </ul>
-      </div>
+      {/* POPUP FORM */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+            <h3 className="text-xl font-semibold mb-4">Send Enquiry</h3>
+
+            <form onSubmit={submitLead} className="space-y-3">
+              <input
+                className="border p-2 w-full"
+                placeholder="Your Name"
+                value={lead.userName}
+                onChange={(e) =>
+                  setLead({ ...lead, userName: e.target.value })
+                }
+                required
+              />
+
+              <input
+                className="border p-2 w-full"
+                placeholder="Email"
+                value={lead.userEmail}
+                onChange={(e) =>
+                  setLead({ ...lead, userEmail: e.target.value })
+                }
+                required
+              />
+
+              <input
+                className="border p-2 w-full"
+                placeholder="Phone"
+                value={lead.userPhone}
+                onChange={(e) =>
+                  setLead({ ...lead, userPhone: e.target.value })
+                }
+              />
+
+              <textarea
+                className="border p-2 w-full"
+                placeholder="Message"
+                value={lead.message}
+                onChange={(e) =>
+                  setLead({ ...lead, message: e.target.value })
+                }
+              />
+
+              <button className="bg-blue-600 w-full text-white p-2 rounded-md">
+                Submit Lead
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowForm(false)}
+                className="w-full mt-2 border p-2 rounded-md"
+              >
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

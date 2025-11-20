@@ -32,7 +32,7 @@ export default function PropertyCard({ property }: { property: Property }) {
         <h2 className="text-lg font-bold text-gray-900">{property.title}</h2>
 
         <p className="text-gray-600 text-sm">
-          {property.area ? `${property.area}, ` : ""}{property.city}
+          {property.location?.area ? `${property.location?.area}, ` : ""}{property.location?.city}
         </p>
 
         {/* Price */}

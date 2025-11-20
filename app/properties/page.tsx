@@ -12,8 +12,10 @@ export interface Property {
   _id: string;
   title: string;
   tagline: string;
-  city: string;
+  location:{city: string;
   area: string;
+  landmark:string;
+  };
   price: {
     value: number;
     unit: string;
@@ -52,7 +54,7 @@ export default function PropertiesPage() {
   );
 
   const bestLocation = allProperties.filter(
-    (p) => p.city?.toLowerCase().includes("jaipur") // example
+    (p) => p.location?.city?.toLowerCase().includes("jaipur") // example
   );
 
   const mostBooked = [...allProperties]; // Future: booking count

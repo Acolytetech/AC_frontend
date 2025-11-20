@@ -13,8 +13,10 @@ export interface Property {
   _id: string;
   title: string;
   tagline: string;
+  location:{
   city: string;
   area: string;
+  };
   price: {
     value: number;
     unit: string;
