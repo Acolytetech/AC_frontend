@@ -16,6 +16,7 @@ export interface Property {
   location:{
   city: string;
   area: string;
+  landmark:string;
   };
   price: {
     value: number;
