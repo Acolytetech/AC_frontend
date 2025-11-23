@@ -21,7 +21,7 @@ export interface Property {
 export default function Hero({
   onSearch,
 }: {
-  onSearch: (filters: any) => void;
+  onSearch: (filters: Record<string, string | number | null>) => void;
 }) {
   const [search, setSearch] = useState({
     location: "",

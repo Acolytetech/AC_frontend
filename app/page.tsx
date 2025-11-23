@@ -53,14 +53,39 @@ export default function HomePage() {
     fetchProperties();
   }, []);
 
-const handleSearch = async (filters: any) => {
+// const handleSearch = async (filters:any) => {
+//   setLoading(true);
+
+//   try {
+//     const filtered = Object.fromEntries(
+//       Object.entries(filters)
+//         .filter(([v]) => v !== "" && v !== null && v !== undefined)
+//         .map(([k, v]) => [k, String(v)]) // 👈 FORCE string values
+//     );
+
+//     const params = new URLSearchParams(filtered).toString();
+
+//     const res = await API.get(`/properties/search?${params}`);
+
+//     const list =
+//       res.data.properties || res.data.data || res.data || [];
+
+//     setProperties(Array.isArray(list) ? list : []);
+//   } catch (err) {
+//     console.error(err);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+const handleSearch = async (filters: Record<string, string | number | null>) => {
   setLoading(true);
 
   try {
     const filtered = Object.fromEntries(
       Object.entries(filters)
-        .filter(([_, v]) => v !== "" && v !== null && v !== undefined)
-        .map(([k, v]) => [k, String(v)]) // 👈 FORCE string values
+        .filter(([key, value]) => value !== "" && value !== null && value !== undefined)
+        .map(([key, value]) => [key, String(value)])
     );
 
     const params = new URLSearchParams(filtered).toString();
@@ -77,7 +102,6 @@ const handleSearch = async (filters: any) => {
     setLoading(false);
   }
 };
-
 
   return (
     <div>
