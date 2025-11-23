@@ -9,15 +9,15 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8">
         {/* Left Section */}
         <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-white">JAIPUR ACCOMMODATION</h2>
+          <h2 className="text-2xl font-bold text-white">Jaipur Dream Homes</h2>
           <p className="text-gray-400 max-w-md">
-            Your global education journey starts with the right home. Find premium student accommodation 
+            Your global education journey starts with the right home. Find premium student accommodation
             in 250+ cities worldwide with verified listings and 24/7 support.
           </p>
 
           {/* Why Choose Us */}
           <div>
-            <h3 className="font-semibold mb-2">Why Choose Jaipur Accommodation</h3>
+            <h3 className="font-semibold mb-2">Why Choose Jaipur Dream Homes</h3>
             <div className="flex flex-wrap gap-2">
               {[
                 "250+ Global Cities",
@@ -108,7 +108,7 @@ export default function Footer() {
 
       {/* Bottom Section */}
       <div className="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500 text-sm flex flex-col md:flex-row justify-between items-center gap-2">
-        <p>© {new Date().getFullYear()} JAIPUR ACCOMMODATION. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Jaipur Dream Homes. All rights reserved.</p>
         <div className="flex gap-4">
           <a href="#" className="hover:text-white">Terms of Service</a>
           <a href="#" className="hover:text-white">Privacy Policy</a>

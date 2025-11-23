@@ -20,7 +20,7 @@ export default function WhyChooseSection() {
 
         {/* Heading */}
         <h2 className="text-3xl md:text-4xl font-bold mt-4 text-gray-800">
-          Why Choose <span className="text-emerald-500">Jaipur Accommodation?</span>
+          Why Choose <span className="text-emerald-500">Jaipur Dream Homes?</span>
         </h2>
         <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
           We&apos;re not just another accommodation provider. We&apos;re your

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { Menu, X } from "lucide-react";
 import InquiryModal from "./global/InquiryModal";
+import Image from "next/image";
 
 interface TokenPayload {
   role: string;
@@ -46,9 +47,16 @@ export default function Navbar() {
       <nav className="bg-black text-white p-4">
         <div className="flex justify-between items-center">
           <Link href="/">
-            <h1 className="text-xl font-bold capitalize">
-              Jaipur Accommodation
-            </h1>
+          <Image
+          src="/img/jplogo.png"
+          width="200"
+          height="100"
+          alt="jaipur home dreams"
+          className=""
+          />
+            {/* <h1 className="text-xl font-bold capitalize">
+              Jaipur Dream Homes
+            </h1> */}
           </Link>
 
           <div className="hidden md:flex gap-6 items-center">
