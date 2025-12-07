@@ -1,3 +1,4 @@
+import Script from "next/script";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import "./globals.css";
@@ -10,6 +11,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="flex flex-col min-h-screen">
+        <Script src="https://www.noupe.com/embed/019af80f65cf70f1a463e671645e0f211b05.js" strategy="afterInteractive" />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
