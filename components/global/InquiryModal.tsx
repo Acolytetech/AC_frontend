@@ -2,53 +2,91 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import API, { setAuthToken } from "@/lib/api";
 
 interface InquiryModalProps {
   isOpen: boolean;
   onClose: () => void;
+  propertyId?: string;
+  propertyTitle?: string;
+  source?: string;
 }
 
-export default function InquiryModal({ isOpen, onClose }: InquiryModalProps) {
+export default function InquiryModal({ isOpen, onClose, propertyId, propertyTitle, source }: InquiryModalProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     location: "",
-    propertyType: "Apartment",
-    jdaApproved: false,
+    propertyType: propertyTitle || "Apartment",
+    message: "",
+    source: source || "",
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    const { name, type } = e.target;
-    let value: string | boolean;
-
-    if (type === "checkbox") {
-      value = (e.target as HTMLInputElement).checked;
-    } else {
-      value = e.target.value;
-    }
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const submitLead = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Inquiry Submitted:", formData);
-    alert("Inquiry submitted successfully!");
-    onClose();
+    setIsSubmitting(true);
+
+    try {
+      // Optional: Set auth token if you use it
+      const token = localStorage.getItem("token");
+      setAuthToken(token || undefined);
+
+      const leadData = {
+        propertyId: propertyId || undefined,
+        userName: formData.name,
+        userEmail: formData.email,
+        userPhone: formData.phone,
+        message: `Location: ${formData.location || "N/A"}\nMessage: ${formData.message || "N/A"}`,
+        status: "inprocess",
+        property: {
+          title: formData.propertyType,
+          listedBy: "",
+          price: { value: "", unit: "" },
+        },
+        source: formData.source || "inquiryform",
+      };
+
+      const res = await API.post("/leads", leadData);
+
+      if (res.status === 200 || res.status === 201) {
+        alert("Inquiry submitted successfully!");
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          location: "",
+          propertyType: propertyTitle || "Apartment",
+          message: "",
+          source: source || "inquiryform",
+        });
+        onClose();
+      } else {
+        alert("Failed to submit inquiry. Please try again.");
+      }
+    } catch (err: any) {
+      console.error("Error submitting inquiry:", err.response || err);
+      const message = err.response?.data?.message || "Something went wrong";
+      alert("Failed to submit inquiry: " + message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-md relative">
-        {/* Close Button */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md relative">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-900"
@@ -56,48 +94,49 @@ export default function InquiryModal({ isOpen, onClose }: InquiryModalProps) {
           <X size={24} />
         </button>
 
-        <h2 className="text-2xl font-bold mb-4">Inquiry Form</h2>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <h3 className="text-xl font-semibold mb-4">Send Enquiry</h3>
+
+        <form onSubmit={submitLead} className="space-y-3">
           <input
-            type="text"
             name="name"
-            placeholder="Full Name"
+            className="border p-2 w-full"
+            placeholder="Your Name"
             value={formData.name}
             onChange={handleChange}
             required
-            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
+
           <input
-            type="email"
             name="email"
+            type="email"
+            className="border p-2 w-full"
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
             required
-            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
+
           <input
-            type="tel"
             name="phone"
-            placeholder="Phone Number"
+            className="border p-2 w-full"
+            placeholder="Phone"
             value={formData.phone}
             onChange={handleChange}
-            required
-            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
+
           <input
-            type="text"
             name="location"
+            className="border p-2 w-full"
             placeholder="Location"
             value={formData.location}
             onChange={handleChange}
-            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
+
           <select
             name="propertyType"
             value={formData.propertyType}
             onChange={handleChange}
-            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border p-2 w-full"
           >
             <option value="1BHK">1BHK</option>
             <option value="2BHK">2BHK</option>
@@ -106,20 +145,31 @@ export default function InquiryModal({ isOpen, onClose }: InquiryModalProps) {
             <option value="Villa">Villa</option>
             <option value="Plot">Plot</option>
           </select>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="jdaApproved"
-              checked={formData.jdaApproved}
-              onChange={handleChange}
-            />
-            JDA Approved
-          </label>
+
+          <textarea
+            name="message"
+            className="border p-2 w-full"
+            placeholder="Message"
+            value={formData.message}
+            onChange={handleChange}
+          />
+
+          <input type="hidden" name="source" value={formData.source} />
+
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition"
+            disabled={isSubmitting}
+            className={`bg-blue-600 w-full text-white p-2 rounded-md ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
           >
-            Submit Inquiry
+            {isSubmitting ? "Submitting..." : "Submit Lead"}
+          </button>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-full mt-2 border p-2 rounded-md"
+          >
+            Cancel
           </button>
         </form>
       </div>

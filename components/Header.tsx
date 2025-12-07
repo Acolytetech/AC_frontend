@@ -1,17 +1,12 @@
 "use client";
+
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { jwtDecode } from "jwt-decode";
 import { Menu, X } from "lucide-react";
 import InquiryModal from "./global/InquiryModal";
 import Image from "next/image";
-
-interface TokenPayload {
-  role: string;
-  exp: number;
-  iat: number;
-}
+import API from "@/lib/api"; // your Axios instance
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -21,24 +16,31 @@ export default function Navbar() {
 
   const router = useRouter();
 
+  // Fetch logged-in user from backend
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      if (token) {
+    const fetchUser = async () => {
+      try {
+        const res = await API.get("/auth/getme", { withCredentials: true });
         setIsLoggedIn(true);
-        const decoded = jwtDecode<TokenPayload>(token);
-        setRole(decoded.role); // partner / admin / user
+        setRole(res.data.role); // admin / partner / user
+      } catch (err) {
+        setIsLoggedIn(false);
+        setRole(null);
       }
-    }
+    };
+
+    fetchUser();
   }, []);
 
-  const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("token");
-      alert("Logged out successfully!");
+  const handleLogout = async () => {
+    try {
+      await API.post("/auth/logout", {}, { withCredentials: true });
       setIsLoggedIn(false);
       setRole(null);
+      alert("Logged out successfully!");
       router.push("/login");
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -47,16 +49,13 @@ export default function Navbar() {
       <nav className="bg-black text-white p-4">
         <div className="flex justify-between items-center">
           <Link href="/">
-          <Image
-          src="/img/jplogo.png"
-          width="200"
-          height="100"
-          alt="jaipur home dreams"
-          className=""
-          />
-            {/* <h1 className="text-xl font-bold capitalize">
-              Jaipur Dream Homes
-            </h1> */}
+            <Image
+              src="/img/jplogo.png"
+              width={200}
+              height={100}
+              alt="jaipur home dreams"
+              className="object-center object-cover"
+            />
           </Link>
 
           <div className="hidden md:flex gap-6 items-center">
@@ -81,7 +80,6 @@ export default function Navbar() {
               Partners with us
             </Link>
 
-            {/* Inquiry Button */}
             <button
               className="bg-blue-500 px-3 py-1 rounded"
               onClick={() => setIsInquiryOpen(true)}
@@ -139,8 +137,6 @@ export default function Navbar() {
             >
               Inquiry Now
             </button>
-
-            <button className="bg-blue-500 px-3 py-1 rounded">Booking</button>
 
             {isLoggedIn ? (
               <button

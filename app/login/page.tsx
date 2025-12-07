@@ -12,26 +12,33 @@ export default function AuthPage() {
   const [name, setName] = useState<string>("");
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      if (isLogin) {
-        // LOGIN API
-        const res = await API.post<{ token: string }>("/auth/login", { email, password });
-        localStorage.setItem("token", res.data.token);
-        setAuthToken(res.data.token);
-        alert("Login successful!");
-        router.push("/");
-      } else {
-        // SIGNUP API
-        const res = await API.post("/auth/signup", { name, email, password });
-        alert("Signup successful! Please login now.");
-        setIsLogin(true); // switch to login after signup
-      }
-    } catch (err) {
-      alert(err || "Something went wrong!");
+  try {
+    if (isLogin) {
+      const res = await API.post<{
+        token: string;
+        role: string;
+        _id: string;
+        name: string;
+        email: string;
+      }>("/auth/login", { email, password });
+
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.role);
+      setAuthToken(res.data.token);
+
+      alert("Login successful!");
+      router.push("/");
+    } else {
+      const res = await API.post("/auth/register", { name, email, password,});
+      alert(res.data?.message || "Signup successful! Please login now.");
+      setIsLogin(true); // switch to login after signup
     }
-  };
+  } catch (err: any) {
+    alert(err.response?.data?.message || "Something went wrong!");
+  }
+};
 
   const handleGoogleAuth = () => {
     // 👇 Google OAuth backend route (change as per your API)
@@ -52,6 +59,15 @@ export default function AuthPage() {
               type="text"
               placeholder="Full Name"
               value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="border rounded px-3 py-2 w-full focus:ring focus:ring-blue-200 outline-none"
+            />
+          )}
+          {!isLogin && (
+            <input
+              type="text"
+              placeholder="role"
+              value="user"
               onChange={(e) => setName(e.target.value)}
               className="border rounded px-3 py-2 w-full focus:ring focus:ring-blue-200 outline-none"
             />

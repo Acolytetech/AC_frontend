@@ -12,16 +12,22 @@ export default function RegisterPage() {
     role: "user",
   });
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      await API.post("/auth/register", form);
-      alert("Registration successful!");
-      router.push("/login");
-    } catch (err) {
-      alert(err || "Registration failed");
-    }
-  };
+ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  try {
+    const res = await API.post("/auth/register", form);
+
+    // Store token and role
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("role", res.data.role);
+
+    alert(res.data.message || "Registration successful!");
+    router.push("/"); // redirect to home or dashboard
+  } catch (err: any) {
+    alert(err.response?.data?.message || "Registration failed");
+  }
+};
+
 
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4">

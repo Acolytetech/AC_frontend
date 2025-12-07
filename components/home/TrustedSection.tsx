@@ -22,7 +22,7 @@ export default function TrustedSection() {
 
         {/* Title */}
         <h2 className="text-3xl md:text-4xl font-bold mt-4 text-gray-800">
-          Trusted by Students <span className="text-emerald-600">Globally</span>
+          Trusted by Faimlies <span className="text-emerald-600">Globally</span>
         </h2>
         <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
           Join thousands of international students who found their perfect home
