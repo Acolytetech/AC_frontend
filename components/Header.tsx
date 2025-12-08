@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import InquiryModal from "./global/InquiryModal";
 import Image from "next/image";
-import API from "@/lib/api"; // your Axios instance
+import API from "@/lib/api";
+import InquiryModal from "./global/InquiryModal";
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,7 +22,7 @@ export default function Navbar() {
       try {
         const res = await API.get("/auth/getme", { withCredentials: true });
         setIsLoggedIn(true);
-        setRole(res.data.role); // admin / partner / user
+        setRole(res.data.role);
       } catch (err) {
         setIsLoggedIn(false);
         setRole(null);
@@ -58,6 +58,7 @@ export default function Navbar() {
             />
           </Link>
 
+          {/* Desktop Menu */}
           <div className="hidden md:flex gap-6 items-center">
             <Link href="/">Home</Link>
             <Link href="/properties">Properties</Link>
@@ -101,10 +102,10 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Toggle */}
           <button
             className="md:hidden"
-            onClick={() => setMenuOpen((prev) => !prev)}
+            onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
@@ -161,8 +162,8 @@ export default function Navbar() {
         )}
       </nav>
 
-      {/* Inquiry Modal */}
-      <InquiryModal
+      {/* Inquiry Modal Fix */}
+        <InquiryModal
         isOpen={isInquiryOpen}
         onClose={() => setIsInquiryOpen(false)}
       />

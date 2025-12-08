@@ -114,7 +114,7 @@ const handleSearch = async (filters: Record<string, string | number | null>) => 
       </h2>
 
       {loading ? <Loader /> : <PropertyGrid properties={properties} />}
-      <TrustedSection />x
+      <TrustedSection />
 
       <h2 className="text-3xl font-bold mb-6 text-center text-blue-600 my-10">
         most loved Sites

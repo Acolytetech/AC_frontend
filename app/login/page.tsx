@@ -26,8 +26,8 @@ export default function AuthPage() {
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
+      setIsLogin(true); 
       setAuthToken(res.data.token);
-
       alert("Login successful!");
       router.push("/");
     } else {

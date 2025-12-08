@@ -283,6 +283,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { AxiosError } from "axios";
+import PropertyGrid from "@/components/home/PropertyGrid";
 
 // PROPERTY INTERFACE
 interface Property {

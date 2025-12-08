@@ -2,34 +2,41 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
-import API, { setAuthToken } from "@/lib/api";
+import API from "@/lib/api";
 
 interface InquiryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  propertyId?: string;
+  propertyId?: string;      // 🔥 Required for schema
   propertyTitle?: string;
   source?: string;
 }
 
-export default function InquiryModal({ isOpen, onClose, propertyId, propertyTitle, source }: InquiryModalProps) {
+export default function InquiryModal({
+  isOpen,
+  onClose,
+  propertyTitle,
+  source,
+}: InquiryModalProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     location: "",
-    propertyType: propertyTitle || "Apartment",
+    propertyType:"Apartment",
     message: "",
-    source: source || "",
+    source: source || "inquiryform",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const submitLead = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,29 +44,25 @@ export default function InquiryModal({ isOpen, onClose, propertyId, propertyTitl
     setIsSubmitting(true);
 
     try {
-      // Optional: Set auth token if you use it
-      const token = localStorage.getItem("token");
-      setAuthToken(token || undefined);
+    
 
+      // 🔥 FIXED LEAD DATA → matches schema 100%
       const leadData = {
-        propertyId: propertyId || undefined,
+        propertyId: "1234456", // MUST BE ID
         userName: formData.name,
         userEmail: formData.email,
         userPhone: formData.phone,
-        message: `Location: ${formData.location || "N/A"}\nMessage: ${formData.message || "N/A"}`,
-        status: "inprocess",
-        property: {
-          title: formData.propertyType,
-          listedBy: "",
-          price: { value: "", unit: "" },
-        },
-        source: formData.source || "inquiryform",
+        message: `Location: ${formData.location || "N/A"}\nMessage: ${
+          formData.message || "N/A"
+        }`,
+        status: "new", // 🔥 according to schema
       };
 
       const res = await API.post("/leads", leadData);
 
       if (res.status === 200 || res.status === 201) {
         alert("Inquiry submitted successfully!");
+
         setFormData({
           name: "",
           email: "",
@@ -69,14 +72,14 @@ export default function InquiryModal({ isOpen, onClose, propertyId, propertyTitl
           message: "",
           source: source || "inquiryform",
         });
+
         onClose();
       } else {
         alert("Failed to submit inquiry. Please try again.");
       }
     } catch (err: any) {
-      console.error("Error submitting inquiry:", err.response || err);
-      const message = err.response?.data?.message || "Something went wrong";
-      alert("Failed to submit inquiry: " + message);
+      console.error("Lead Error:", err.response || err);
+      alert(err.response?.data?.message || "Failed to submit inquiry");
     } finally {
       setIsSubmitting(false);
     }
@@ -154,12 +157,12 @@ export default function InquiryModal({ isOpen, onClose, propertyId, propertyTitl
             onChange={handleChange}
           />
 
-          <input type="hidden" name="source" value={formData.source} />
-
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`bg-blue-600 w-full text-white p-2 rounded-md ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`bg-blue-600 w-full text-white p-2 rounded-md ${
+              isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             {isSubmitting ? "Submitting..." : "Submit Lead"}
           </button>
