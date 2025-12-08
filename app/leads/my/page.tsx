@@ -6,6 +6,7 @@ import * as XLSX from "xlsx";
 interface Lead {
   _id: string;
   createdAt:string;
+  source:string;
   userName: string;
   userEmail: string;
   userPhone: string;
@@ -52,6 +53,7 @@ export default function MyLeads() {
     const data = leads.map((lead, index) => ({
       "S.No": index + 1,
       createdAt:lead.createdAt,
+      source:lead.source,
       Name: lead.userName,
       Email: lead.userEmail,
       Phone: lead.userPhone,
@@ -88,6 +90,7 @@ export default function MyLeads() {
           <tr>
             <th className="px-4 py-2 border">S.No</th>
             <th className="px-4 py-2 border">created at</th>
+            <th className="px-4 py-2 border">source</th>
             <th className="px-4 py-2 border">Name</th>
             <th className="px-4 py-2 border">Email</th>
             <th className="px-4 py-2 border">Phone</th>
@@ -112,6 +115,7 @@ export default function MyLeads() {
     second: "2-digit",
   })}
 </td>
+              <td className="px-4 py-2 border">{lead.source}</td>
               <td className="px-4 py-2 border">{lead.userName}</td>
               <td className="px-4 py-2 border">{lead.userEmail}</td>
               <td className="px-4 py-2 border">{lead.userPhone}</td>

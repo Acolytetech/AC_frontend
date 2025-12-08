@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import API from "@/lib/api";
+import { usePathname } from "next/navigation";
 
 interface InquiryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  propertyId?: string;      // 🔥 Required for schema
   propertyTitle?: string;
   source?: string;
 }
@@ -18,14 +18,16 @@ export default function InquiryModal({
   propertyTitle,
   source,
 }: InquiryModalProps) {
+  const pathname = usePathname(); // ⭐ current URL
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     location: "",
-    propertyType:"Apartment",
+    propertyType: "Apartment",
     message: "",
-    source: source || "inquiryform",
+    source: source || pathname || "inquiryform", // ⭐ Auto URL
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,18 +46,18 @@ export default function InquiryModal({
     setIsSubmitting(true);
 
     try {
-    
-
-      // 🔥 FIXED LEAD DATA → matches schema 100%
+      // ⭐ FINAL LEAD DATA (as per your backend schema)
       const leadData = {
-        propertyId: "1234456", // MUST BE ID
         userName: formData.name,
         userEmail: formData.email,
         userPhone: formData.phone,
-        message: `Location: ${formData.location || "N/A"}\nMessage: ${
-          formData.message || "N/A"
-        }`,
-        status: "new", // 🔥 according to schema
+        source:`${pathname}`,
+        message: `
+Location: ${formData.location || "N/A"}
+Property Type: ${formData.propertyType}
+Message: ${formData.message || "N/A"}
+        `,
+        status: "new",
       };
 
       const res = await API.post("/leads", leadData);
@@ -63,6 +65,7 @@ export default function InquiryModal({
       if (res.status === 200 || res.status === 201) {
         alert("Inquiry submitted successfully!");
 
+        // reset
         setFormData({
           name: "",
           email: "",
@@ -70,7 +73,7 @@ export default function InquiryModal({
           location: "",
           propertyType: propertyTitle || "Apartment",
           message: "",
-          source: source || "inquiryform",
+          source: source || pathname || "inquiryform",
         });
 
         onClose();

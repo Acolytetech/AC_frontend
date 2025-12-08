@@ -109,18 +109,23 @@ const handleSearch = async (filters: Record<string, string | number | null>) => 
       <Hero onSearch={handleSearch} />
 
 
-      <h2 className="text-3xl font-bold mb-6 text-center text-blue-600 my-10">
+<div className="max-w-7xl mx-auto  py-20 ">
+      <h2 className="text-3xl font-bold mb-6 text-center text-blue-600 py-10 ">
         Best Booking Sites
       </h2>
 
       {loading ? <Loader /> : <PropertyGrid properties={properties} />}
+
+</div>
       <TrustedSection />
+<div className="max-w-7xl mx-auto  py-20 ">
 
       <h2 className="text-3xl font-bold mb-6 text-center text-blue-600 my-10">
         most loved Sites
       </h2>
 
       {loading ? <Loader /> : <PropertyGrid properties={properties} />}
+      </div>
       <HowItWorks />
       <WhyChooseSection />
     </div>

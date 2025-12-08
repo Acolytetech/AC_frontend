@@ -37,6 +37,8 @@ interface User {
 
 interface Lead {
   _id: string;
+  source:string,
+  createdAt:string,
   userName: string;
   userEmail: string;
   userPhone: string;
@@ -252,6 +254,9 @@ const LeadsTable = ({ leads }: { leads: Lead[] }) => (
   <table className="w-full bg-white text-left shadow rounded">
     <thead className="bg-gray-200">
       <tr>
+        <th className="p-2">sr no.</th>
+        <th className="p-2">source</th>
+        <th className="p-2">created at</th>
         <th className="p-2">Name</th>
         <th className="p-2">Email</th>
         <th className="p-2">Phone</th>
@@ -259,8 +264,18 @@ const LeadsTable = ({ leads }: { leads: Lead[] }) => (
       </tr>
     </thead>
     <tbody>
-      {leads.map((lead) => (
+      {leads.map((lead,index) => (
         <tr key={lead._id} className="border-b">
+              <td className="px-4 py-2  font-bold text-center">{index + 1}</td>
+          <td className="p-2">{lead.source}</td>
+          <td className="p-2">{new Date(lead.createdAt).toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  })}</td>
           <td className="p-2">{lead.userName}</td>
           <td className="p-2">{lead.userEmail}</td>
           <td className="p-2">{lead.userPhone}</td>

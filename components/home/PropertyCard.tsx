@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Property } from "@/app/properties/page";
 import { useRouter } from "next/navigation";
+import { CiLocationOn } from "react-icons/ci";
 
 export default function PropertyCard({ property }: { property: Property }) {
   const router = useRouter();
@@ -16,35 +17,40 @@ export default function PropertyCard({ property }: { property: Property }) {
 
   return (
     <div
-      className="relative border rounded-xl bg-white shadow hover:shadow-xl transition overflow-hidden cursor-pointer"
+      className="relative shadow-xl shadow-gray-500 rounded-xl bg-white hover:-translate-y-3 duration-300 hover:shadow-xl transition overflow-hidden cursor-pointer"
       onClick={() => router.push(`/properties/${id}`)}
     >
+      <div className="relative">
+
       {/* Image */}
       <img
         src={imageUrl}
         alt={property.title}
 
-        className="object-cover object-center w-full h-[300px]"
-      />
+        className="object-cover object-center w-full h-[250px]"
+        />
+        <button className="rounded-full bg-white text-back font-bold uppercase absolute top-2 right-2 p-2 px-4">for sale </button>
+        </div>
 
       {/* Content */}
       <div className="p-4">
-        <h2 className="text-lg font-bold text-gray-900">{property.title}</h2>
-
-        <p className="text-gray-600 text-sm">
-          {property.location?.area ? `${property.location?.area}, ` : ""}{property.location?.city}
-        </p>
-
-        {/* Price */}
-        <p className="mt-2 text-blue-600 font-semibold text-lg">
+         {/* Price */}
+        <p className="mt-2 text-blue-600 font-bold text-lg">
           ₹{property.price?.value}{" "}
           <span className="text-sm text-gray-600">{property.price?.unit}</span>
         </p>
+        <h2 className="text-lg font-bold text-gray-900">{property.title}</h2>
 
-        {/* Property Type */}
+        <p className="text-gray-900 text-xl  ">
+          <CiLocationOn fill="red" className="text-red-600 "/> {property.location?.area ? `${property.location?.area}, ` : ""}{property.location?.city}
+        </p>
+
+
+
+        {/* Property Type
         <p className="mt-1 text-sm text-gray-700 capitalize">
           Type: <span className="font-medium">{property.propertyType}</span>
-        </p>
+        </p> */}
 
         {/* CTA Button */}
         <button
