@@ -10,6 +10,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <script src="https://accounts.google.com/gsi/client" async defer></script>
+
       <body className="flex flex-col min-h-screen">
         <Script src="https://www.noupe.com/embed/019af80f65cf70f1a463e671645e0f211b05.js" strategy="afterInteractive" />
         <Header />

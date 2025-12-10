@@ -1,48 +1,88 @@
 "use client";
-import { useState, FormEvent } from "react";
+
+import { useState, FormEvent, useEffect, useRef } from "react";
 import API, { setAuthToken } from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { FcGoogle } from "react-icons/fc";
 
 export default function AuthPage() {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState(true); // true = login, false = signup
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [name, setName] = useState<string>("");
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+  const googleButtonRef = useRef(null);
 
-  try {
-    if (isLogin) {
-      const res = await API.post<{
-        token: string;
-        role: string;
-        _id: string;
-        name: string;
-        email: string;
-      }>("/auth/login", { email, password });
+  // ------------------- GOOGLE BUTTON INIT -------------------
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    // @ts-ignore
+    if (!window.google) return;
+
+    /* global google */
+    // @ts-ignore
+    google.accounts.id.initialize({
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+      callback: handleGoogleResponse,
+    });
+// @ts-ignore
+    google.accounts.id.renderButton(googleButtonRef.current, {
+      theme: "outline",
+      size: "large",
+      width: "100%",
+    });
+  }, []);
+
+  // ------------------- GOOGLE RESPONSE -------------------
+  const handleGoogleResponse = async (response: any) => {
+    try {
+      const { credential } = response;
+
+      const res = await API.post(
+        "/auth/google",
+        { credential },
+        { withCredentials: true }
+      );
 
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
-      setIsLogin(true); 
       setAuthToken(res.data.token);
-      alert("Login successful!");
-      router.push("/");
-    } else {
-      const res = await API.post("/auth/register", { name, email, password,});
-      alert(res.data?.message || "Signup successful! Please login now.");
-      setIsLogin(true); // switch to login after signup
-    }
-  } catch (err: any) {
-    alert(err.response?.data?.message || "Something went wrong!");
-  }
-};
 
-  const handleGoogleAuth = () => {
-    // 👇 Google OAuth backend route (change as per your API)
-    window.location.href = "https://ac-backendnew.onrender.com/auth/google";
+      alert("Google Login Successful!");
+      router.push("/");
+    } catch (error) {
+      alert("Google Login Failed");
+      console.log(error);
+    }
+  };
+
+  // ------------------- NORMAL LOGIN/SIGNUP -------------------
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      if (isLogin) {
+        const res = await API.post("/auth/login", { email, password });
+
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("role", res.data.role);
+        setAuthToken(res.data.token);
+
+        alert("Login successful!");
+        router.push("/");
+      } else {
+        const res = await API.post("/auth/register", {
+          name,
+          email,
+          password,
+          role: "user",
+        });
+
+        alert(res.data.message || "Signup Successful");
+        setIsLogin(true);
+      }
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Something went wrong");
+    }
   };
 
   return (
@@ -63,22 +103,15 @@ export default function AuthPage() {
               className="border rounded px-3 py-2 w-full focus:ring focus:ring-blue-200 outline-none"
             />
           )}
-          {!isLogin && (
-            <input
-              type="text"
-              placeholder="role"
-              value="user"
-              onChange={(e) => setName(e.target.value)}
-              className="border rounded px-3 py-2 w-full focus:ring focus:ring-blue-200 outline-none"
-            />
-          )}
+
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="border rounded px-3 py-2 w-full focus:ring focus:ring-blue-200 outline-none"
           />
+
           <input
             type="password"
             placeholder="Password"
@@ -102,14 +135,10 @@ export default function AuthPage() {
           <hr className="flex-grow border-gray-300" />
         </div>
 
-        {/* Google Auth */}
-        <button
-          onClick={handleGoogleAuth}
-          className="flex items-center justify-center w-full border border-gray-300 rounded px-4 py-2 hover:bg-gray-100 transition"
-        >
-          <FcGoogle className="mr-2 text-xl" />
-          Continue with Google
-        </button>
+        {/* GOOGLE BUTTON */}
+        <div ref={googleButtonRef}>
+          
+        </div>
 
         {/* Switch link */}
         <p className="text-center text-sm text-gray-600 mt-6">
