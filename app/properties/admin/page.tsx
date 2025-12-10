@@ -14,6 +14,7 @@ import {
   Check,
   X,
 } from "lucide-react";
+import Link from "next/link";
 
 interface Property {
   _id: string;
@@ -175,32 +176,32 @@ const updateUser = async (id: string, updatedData: { name: string; role: string 
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
 
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-md p-4">
+      <div className=" w-full md:max-w-64 bg-white shadow-md p-4">
         <h2 className="text-xl font-bold mb-6">Admin Dashboard</h2>
-        <nav className="space-y-3">
+        <nav className="md:space-y-3 gap-3 flex flex-row flex-wrap md:flex-col">
           <button
-            className={`flex items-center gap-2 w-full p-2 rounded ${activeTab === "dashboard" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+            className={`flex items-center flex-1 gap-2 md:w-full p-2 h-fit rounded ${activeTab === "dashboard" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
             onClick={() => setActiveTab("dashboard")}
           >
             <LayoutDashboard size={18} /> Summary
           </button>
           <button
-            className={`flex items-center gap-2 w-full p-2 rounded ${activeTab === "leads" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+            className={`flex items-center flex-1 gap-2 md:w-full p-2 rounded ${activeTab === "leads" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
             onClick={() => setActiveTab("leads")}
           >
             <List size={18} /> Leads
           </button>
           <button
-            className={`flex items-center gap-2 w-full p-2 rounded ${activeTab === "properties" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+            className={`flex items-center flex-1 gap-2 md:w-full p-2 rounded ${activeTab === "properties" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
             onClick={() => setActiveTab("properties")}
           >
             <Building size={18} /> Properties
           </button>
           <button
-            className={`flex items-center gap-2 w-full p-2 rounded ${activeTab === "users" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+            className={`flex flex-1 items-center gap-2 md:w-full p-2 rounded ${activeTab === "users" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
             onClick={() => setActiveTab("users")}
           >
             <Users size={18} /> Users
@@ -209,11 +210,11 @@ const updateUser = async (id: string, updatedData: { name: string; role: string 
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 overflow-scroll py-2 md:p-6">
         {activeTab === "dashboard" && (
           <div>
             <h2 className="text-2xl font-bold mb-6">Dashboard Summary</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Card title="Total Properties" value={counts.totalProperties} />
               <Card title="Approved Properties" value={counts.approvedProperties} />
               <Card title="Total Users" value={counts.totalUsers} />
@@ -245,45 +246,48 @@ const updateUser = async (id: string, updatedData: { name: string; role: string 
 // ---------------- COMPONENTS ----------------
 const Card = ({ title, value }: { title: string; value: number }) => (
   <div className="bg-white shadow p-4 rounded-lg border">
-    <h3 className="text-lg font-semibold">{title}</h3>
-    <p className="text-3xl font-bold mt-2">{value}</p>
+    <h3 className="text-sm md:text-lg font-semibold">{title}</h3>
+    <p className="text:xl md:text-3xl font-bold mt-2">{value}</p>
   </div>
 );
 
 const LeadsTable = ({ leads }: { leads: Lead[] }) => (
-  <table className="w-full bg-white text-left shadow rounded">
+  <>
+    <Link href='/my' className="bg-red-600 font-bold uppercase text-white p-4 block w-full text-center md:max-w-fit ml-auto mb-2">download leads</Link>
+  <table className="w-full bg-white text-left shadow rounded border">
     <thead className="bg-gray-200">
-      <tr>
-        <th className="p-2">sr no.</th>
-        <th className="p-2">source</th>
-        <th className="p-2">created at</th>
-        <th className="p-2">Name</th>
-        <th className="p-2">Email</th>
-        <th className="p-2">Phone</th>
-        <th className="p-2">Message</th>
+      <tr className="">
+        <th className="p-2 min-w-20 border">sr no.</th>
+        <th className="p-2 border">source</th>
+        <th className="p-2 border">created at</th>
+        <th className="p-2 border">Name</th>
+        <th className="p-2 border">Email</th>
+        <th className="p-2 border">Phone</th>
+        <th className="p-2 border">Message</th>
       </tr>
     </thead>
     <tbody>
       {leads.map((lead,index) => (
         <tr key={lead._id} className="border-b">
-              <td className="px-4 py-2  font-bold text-center">{index + 1}</td>
-          <td className="p-2">{lead.source}</td>
-          <td className="p-2">{new Date(lead.createdAt).toLocaleString("en-IN", {
-    day: "2-digit",
+              <td className="px-4 py-2  border  font-bold text-left">{index + 1}</td>
+          <td className="p-2 border">{lead.source}</td>
+          <td className="p-2 border">{new Date(lead.createdAt).toLocaleString("en-IN", {
+            day: "2-digit",
     month: "short",
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
   })}</td>
-          <td className="p-2">{lead.userName}</td>
-          <td className="p-2">{lead.userEmail}</td>
-          <td className="p-2">{lead.userPhone}</td>
-          <td className="p-2">{lead.message}</td>
+          <td className="p-2 border">{lead.userName}</td>
+          <td className="p-2 border">{lead.userEmail}</td>
+          <td className="p-2 border">{lead.userPhone}</td>
+          <td className="p-2 border">{lead.message}</td>
         </tr>
       ))}
     </tbody>
   </table>
+</>
 );
 
 const PropertiesTable = ({

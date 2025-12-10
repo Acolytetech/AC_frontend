@@ -55,7 +55,7 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section className="py-16 bg-gray-50" id="how-it-works">
+    <section className="py-16 px-6 md:px-1 bg-gray-50" id="how-it-works">
       {/* Heading */}
       <div className="text-center mb-12">
         <span className="px-4 py-1 bg-gradient-to-r from-blue-500 to-emerald-500 text-white text-sm font-semibold rounded-full shadow">

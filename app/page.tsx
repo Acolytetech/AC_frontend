@@ -109,7 +109,7 @@ const handleSearch = async (filters: Record<string, string | number | null>) => 
       <Hero onSearch={handleSearch} />
 
 
-<div className="max-w-7xl mx-auto  py-20 ">
+<div className="max-w-7xl px-4 mx-auto  py-10 ">
       <h2 className="text-3xl font-bold mb-6 text-center text-blue-600 py-10 ">
         Best Booking Sites
       </h2>
@@ -118,7 +118,7 @@ const handleSearch = async (filters: Record<string, string | number | null>) => 
 
 </div>
       <TrustedSection />
-<div className="max-w-7xl mx-auto  py-20 ">
+<div className="max-w-7xl mx-auto px-4  py-10 ">
 
       <h2 className="text-3xl font-bold mb-6 text-center text-blue-600 my-10">
         most loved Sites
